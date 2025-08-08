@@ -1,11 +1,11 @@
 # Mi Primera API FastAPI - Bootcamp
 
-**👤 Desarrollador**: will-andres-ramos-gomez
-**📧 Email**: 166151265+00RAM00@users.noreply.github.com
+**👤 Desarrollador**: Yeraldin-Olaya-Ríos
+**📧 Email**: 192662111+olaya19@users.noreply.github.com.
 **� Privacidad**: Email configurado según mejores prácticas de GitHub
-**�📅 Fecha de creación**: 2025-08-02 16:03:48
-**📂 Ruta del proyecto**: /c/Users/..BOGDFPCGMP5753/desarrollo-personal/Will-Ramos-bootcamp/mi-primera-api-fastapi
-**💻 Equipo de trabajo**: BOGDFPCGMP5753
+**�📅 Fecha de creación**: 2025-08-07 20:34:28
+**📂 Ruta del proyecto**: /c/Users/..DESKTOP-BOGRT34UJ/desarrollo-personal/Yeraldin-Olaya-bootcamp/mi-primera-api-fastapi
+**💻 Equipo de trabajo**: DESKTOP-BOGRT34UJ
 
 ## 🔧 Configuración Local
 
