@@ -1,4 +1,4 @@
-import pytest 
+import pytest
 from fastapi.testclient import TestClient
 
 def test_crear_producto_sin_categoria(client: TestClient):
