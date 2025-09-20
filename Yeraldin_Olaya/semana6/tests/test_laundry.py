@@ -11,7 +11,7 @@ class TestLavanderiaAPI:
     def test_create_pedido_success(self, client, sample_pedido_data, auth_headers):
         ###Test de creación exitosa de pedido en lavanderia
         response = client.post(
-            ###f\"/{tu_prefijo}{tu_entidad}s/\",
+            "/laundry_pedidos/",
             json=sample_pedido_data,
             headers=auth_headers
         )

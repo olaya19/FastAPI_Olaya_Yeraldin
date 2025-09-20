@@ -1,27 +1,28 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from .database import engine, Base, get_db
-from .models import User, Product, Favorite
-from .schemas import UserRegister, UserLogin, Token, UserResponse, ProductCreate, ProductResponse, FavoriteResponse
-from .auth import get_password_hash, verify_password, create_access_token, get_current_user, require_admin
-from fastapi import FastAPI
-from .database import engine, Base
-from .models import User, Product, Favorite # Make sure to import all your models
+from database import engine, Base, get_db
+from models import User, Product, Favorite
+from schemas import (
+    UserRegister, UserLogin, Token, UserResponse,
+    ProductCreate, ProductResponse, FavoriteResponse
+)
+from auth import (
+    get_password_hash, verify_password,
+    create_access_token, get_current_user, require_admin
+)
 
-app = FastAPI()
+app = FastAPI(title="Laundry API")
 
-# This is the key part that creates the tables
 @app.on_event("startup")
 def on_startup():
+    # SOLO para desarrollo. En producción usa Alembic.
     Base.metadata.create_all(bind=engine)
 
-# 🔴 OBLIGATORIOS - Core de Autenticación
+# ---------------------- Usuarios ---------------------- #
 @app.post("/register", response_model=UserResponse)
 def register_user(user_data: UserRegister, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.username == user_data.username).first()
-    if db_user:
+    if db.query(User).filter(User.username == user_data.username).first():
         raise HTTPException(status_code=400, detail="Username already registered")
-    
     hashed_password = get_password_hash(user_data.password)
     new_user = User(
         username=user_data.username,
@@ -58,5 +59,4 @@ def protected_endpoint(current_user: User = Depends(get_current_user)):
 def admin_only_endpoint(current_user: User = Depends(require_admin)):
     return {"message": "Welcome, Admin. This is a restricted area."}
 
-# Implement the optional endpoints (products and favorites) here using the provided schemas and dependencies.
-# The logic for these endpoints would be similar to the examples in the project description.
+# Aquí luego agregas los endpoints de Products y Favorites.
