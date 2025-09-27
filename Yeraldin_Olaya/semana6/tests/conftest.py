@@ -7,7 +7,9 @@ from main import app, get_db
 from database import Base
 
 # Base de datos de prueba
-SQLALCHEMY_DATABASE_URL = "sqlite:///.test_laundry.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test_laundry.db"
+
+
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -53,19 +55,23 @@ def sample_pedido_data():
 
 @pytest.fixture
 def auth_headers(client):
-    """Genera headers con token de autenticación."""
-    client.post("/auth/register", json={
+    # Registrar usuario admin de prueba
+    r1 = client.post("/register", json={
         "username": "admin_laundry",
         "password": "test123",
+        "email": "admin@laundry.test",
         "role": "admin"
     })
+    print("REGISTER:", r1.status_code, r1.json())   # 👈 DEPURAR
 
-    login_response = client.post("/auth/login", data={
+    # Iniciar sesión
+    r2 = client.post("/login", json={
         "username": "admin_laundry",
         "password": "test123"
     })
+    print("LOGIN:", r2.status_code, r2.json())      # 👈 DEPURAR
 
-    token = login_response.json().get("access_token")
+    token = r2.json().get("access_token")
     return {"Authorization": f"Bearer {token}"}
 
 ###@pytest.fixture

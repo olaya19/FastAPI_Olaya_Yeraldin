@@ -1,5 +1,8 @@
 from pydantic import BaseModel
 from typing import Optional
+from datetime import date
+from pydantic import Field, validator
+
 
 # Schemas de Usuario
 class UserRegister(BaseModel):
@@ -42,3 +45,30 @@ class FavoriteResponse(BaseModel):
     user_id: int
     product_id: int
     product: ProductResponse
+
+class PedidoCreate(BaseModel):
+    cliente: str = Field(..., min_length=1)
+    prendas: int = Field(..., gt=0)
+    tipo_servicio: str = Field(..., min_length=3)
+    fecha_recepcion: date
+    fecha_entrega: date
+    estado: Optional[str] = "pendiente"
+
+    @validator("fecha_entrega")
+    def entrega_no_menor_recepcion(cls, v, values):
+        fr = values.get("fecha_recepcion")
+        if fr and v < fr:
+            raise ValueError("fecha_entrega debe ser >= fecha_recepcion")
+        return v
+
+class PedidoResponse(BaseModel):
+    id: int
+    cliente: str
+    prendas: int
+    tipo_servicio: str
+    fecha_recepcion: date
+    fecha_entrega: date
+    estado: str
+
+    class Config:
+        orm_mode = True
