@@ -1,19 +1,24 @@
-from pydantic import BaseModel
 from typing import List, Optional
+
+from pydantic import BaseModel
+
 
 # Schemas para Categoría
 class CategoriaBase(BaseModel):
     nombre: str
     descripcion: str
 
+
 class CategoriaCreate(CategoriaBase):
     pass
+
 
 class Categoria(CategoriaBase):
     id: int
 
     class Config:
         from_attributes = True
+
 
 # Schemas actualizados para Producto
 class ProductoBase(BaseModel):
@@ -22,14 +27,17 @@ class ProductoBase(BaseModel):
     descripcion: str
     categoria_id: Optional[int] = None
 
+
 class ProductoCreate(ProductoBase):
     pass
+
 
 class ProductoUpdate(BaseModel):
     nombre: str = None
     precio: float = None
     descripcion: str = None
     categoria_id: int = None
+
 
 # Producto con información de categoría incluida
 class ProductoConCategoria(ProductoBase):
@@ -38,6 +46,7 @@ class ProductoConCategoria(ProductoBase):
 
     class Config:
         from_attributes = True
+
 
 # Categoría con lista de productos
 class CategoriaConProductos(Categoria):

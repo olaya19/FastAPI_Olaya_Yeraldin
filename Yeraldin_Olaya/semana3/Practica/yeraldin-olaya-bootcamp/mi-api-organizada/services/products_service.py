@@ -1,6 +1,7 @@
-from typing import List, Optional
 from datetime import datetime
-from models.products import ProductCreate, ProductUpdate, ProductResponse
+from typing import List, Optional
+
+from models.products import ProductCreate, ProductResponse, ProductUpdate
 
 # Base de datos simulada (en memoria)
 products_db = [
@@ -10,7 +11,7 @@ products_db = [
         "price": 1500.0,
         "stock": 10,
         "description": "Laptop para gaming de alta gama",
-        "created_at": datetime.now()
+        "created_at": datetime.now(),
     },
     {
         "id": 2,
@@ -18,12 +19,12 @@ products_db = [
         "price": 45.0,
         "stock": 50,
         "description": "Mouse ergonómico inalámbrico",
-        "created_at": datetime.now()
-    }
+        "created_at": datetime.now(),
+    },
 ]
 
-class ProductService:
 
+class ProductService:
     @staticmethod
     def get_all_products() -> List[dict]:
         return products_db
@@ -40,7 +41,9 @@ class ProductService:
         # Verificar nombre único
         for existing in products_db:
             if existing["name"].lower() == product_data.name.lower():
-                raise ValueError(f"Ya existe un producto con el nombre '{product_data.name}'")
+                raise ValueError(
+                    f"Ya existe un producto con el nombre '{product_data.name}'"
+                )
 
         # Crear nuevo producto
         new_id = max([p["id"] for p in products_db]) + 1 if products_db else 1
@@ -50,7 +53,7 @@ class ProductService:
             "price": product_data.price,
             "stock": product_data.stock,
             "description": product_data.description,
-            "created_at": datetime.now()
+            "created_at": datetime.now(),
         }
 
         products_db.append(new_product)

@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
+
 
 class User(Base):
     __tablename__ = "users"
@@ -13,6 +14,7 @@ class User(Base):
     role = Column(String, default="user")  # "user" o "admin"
     is_active = Column(Boolean, default=True)
 
+
 class Product(Base):
     __tablename__ = "products"
 
@@ -21,6 +23,7 @@ class Product(Base):
     description = Column(String)
     price = Column(Integer)  # En centavos
     created_by = Column(Integer, ForeignKey("users.id"))
+
 
 class Favorite(Base):
     __tablename__ = "favorites"

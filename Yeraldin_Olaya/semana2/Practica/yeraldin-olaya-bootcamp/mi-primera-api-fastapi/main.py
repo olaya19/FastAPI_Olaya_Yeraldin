@@ -1,14 +1,17 @@
+from typing import List, Optional
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Optional, List
 
 app = FastAPI(title="My Enhanced API - Week 2")
+
 
 # Modelos de datos
 class Product(BaseModel):
     name: str
     price: int
     available: bool = True
+
 
 class ProductResponse(BaseModel):
     id: int
@@ -17,25 +20,27 @@ class ProductResponse(BaseModel):
     available: bool
     message: str = "Successful operation"
 
+
 class ProductListResponse(BaseModel):
     products: List[dict]
     total: int
     message: str = "List retrieved"
 
+
 # Almacenamiento temporal
 products = []
+
 
 # Endpoints básicos
 @app.get("/")
 def hello_world() -> dict:
     return {"message": "Week 2 API with Pydantic and Type Hints!"}
 
+
 @app.get("/products", response_model=ProductListResponse)
 def get_products() -> ProductListResponse:
-    return ProductListResponse(
-        products=products,
-        total=len(products)
-    )
+    return ProductListResponse(products=products, total=len(products))
+
 
 @app.post("/products", response_model=ProductResponse)
 def create_product(product: Product) -> ProductResponse:
@@ -45,6 +50,7 @@ def create_product(product: Product) -> ProductResponse:
 
     return ProductResponse(**product_dict, message="Product created")
 
+
 @app.get("/products/{product_id}")
 def get_product(product_id: int) -> dict:
     for product in products:
@@ -52,10 +58,10 @@ def get_product(product_id: int) -> dict:
             return {"product": product}
     raise HTTPException(status_code=404, detail="Product not found")
 
+
 @app.get("/search")
 def search_products(
-    name: Optional[str] = None,
-    max_price: Optional[int] = None
+    name: Optional[str] = None, max_price: Optional[int] = None
 ) -> dict:
     results = products.copy()
 

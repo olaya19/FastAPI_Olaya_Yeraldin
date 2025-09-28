@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from sqlalchemy.orm import relationship
 from database import Base
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
 
 # Modelo existente de Producto (actualizar)
 class Producto(Base):
@@ -15,6 +16,7 @@ class Producto(Base):
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
     categoria = relationship("Categoria", back_populates="productos")
 
+
 # NUEVO: Modelo de Categoría
 class Categoria(Base):
     __tablename__ = "categorias"
@@ -26,10 +28,12 @@ class Categoria(Base):
     # Relación: una categoría tiene muchos productos
     productos = relationship("Producto", back_populates="categoria")
 
-
     # models.py
-from sqlalchemy import Column, Integer, String, Boolean
+
+
 from database import Base
+from sqlalchemy import Boolean, Column, Integer, String
+
 
 class User(Base):
     __tablename__ = "users"
@@ -45,6 +49,7 @@ class User(Base):
 class Post(BaseModel):
     title: str
     content: str
+
 
 # Lista global simple (en producción usarías DB)
 posts = []

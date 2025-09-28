@@ -1,17 +1,15 @@
 # main.py
-from fastapi import FastAPI
 import redis.asyncio as aioredis
-from slowapi import Limiter
-from slowapi.util import get_remote_address
-from slowapi.middleware import SlowAPIMiddleware
-from prometheus_fastapi_instrumentator import Instrumentator
 from database import Base, engine
-
-# Importar routers
-from views import massage_list, massage_create, massage_update, massage_delete
-
+from fastapi import FastAPI
 # Importar middleware personalizado
 from middleware.logging_middleware import LoggingMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
+from slowapi import Limiter
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.util import get_remote_address
+# Importar routers
+from views import massage_create, massage_delete, massage_list, massage_update
 
 # Crear tablas si no existen
 Base.metadata.create_all(bind=engine)
@@ -53,6 +51,7 @@ app.include_router(massage_list.router, prefix="/massages", tags=["list"])
 app.include_router(massage_create.router, prefix="/massages", tags=["create"])
 app.include_router(massage_update.router, prefix="/massages", tags=["update"])
 app.include_router(massage_delete.router, prefix="/massages", tags=["delete"])
+
 
 # --------------------------
 # Endpoint raíz

@@ -1,12 +1,14 @@
 # controllers/massage_controller.py
-from models.massage_model import Massage
 from database import SessionLocal
+from models.massage_model import Massage
+
 
 def get_all_massages():
     db = SessionLocal()
     massages = db.query(Massage).all()
     db.close()
     return massages
+
 
 def create_massage(session: str, therapist: str, schedule: str):
     db = SessionLocal()
@@ -17,7 +19,10 @@ def create_massage(session: str, therapist: str, schedule: str):
     db.close()
     return massage
 
-def update_massage(massage_id: int, session: str = None, therapist: str = None, schedule: str = None):
+
+def update_massage(
+    massage_id: int, session: str = None, therapist: str = None, schedule: str = None
+):
     db = SessionLocal()
     massage = db.query(Massage).filter(Massage.id == massage_id).first()
     if session:
@@ -30,6 +35,7 @@ def update_massage(massage_id: int, session: str = None, therapist: str = None, 
     db.refresh(massage)
     db.close()
     return massage
+
 
 def delete_massage(massage_id: int):
     db = SessionLocal()

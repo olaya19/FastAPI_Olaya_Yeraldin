@@ -1,14 +1,18 @@
-from pydantic import BaseModel
 from typing import Literal
+
+from pydantic import BaseModel
+
 
 class UserRegister(BaseModel):
     username: str
     email: str
     password: str
 
+
 class UserLogin(BaseModel):
     username: str
     password: str
+
 
 class UserResponse(BaseModel):
     id: int
@@ -17,9 +21,11 @@ class UserResponse(BaseModel):
     is_active: bool
     role: str  # NUEVO: incluir role en respuesta
 
+
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
 
 # NUEVO: Schema para actualizar roles (solo admin)
 class UserRoleUpdate(BaseModel):

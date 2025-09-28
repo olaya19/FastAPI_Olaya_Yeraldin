@@ -1,24 +1,21 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from auth import (create_access_token, get_current_user, get_password_hash,
+                  require_admin, verify_password)
+from database import Base, engine, get_db
+from fastapi import Depends, FastAPI, HTTPException, status
+from models import Favorite, Pedido, Product, User
+from schemas import (FavoriteResponse, PedidoCreate, PedidoResponse,
+                     ProductCreate, ProductResponse, Token, UserLogin,
+                     UserRegister, UserResponse)
 from sqlalchemy.orm import Session
-from database import engine, Base, get_db
-from models import User, Product, Favorite, Pedido
-from schemas import (
-    UserRegister, UserLogin, Token, UserResponse,
-    ProductCreate, ProductResponse, FavoriteResponse,PedidoCreate, PedidoResponse
-)
-from auth import (
-    get_password_hash, verify_password,
-    create_access_token, get_current_user, require_admin
-)
-
-from fastapi import status
 
 app = FastAPI(title="Laundry API")
+
 
 @app.on_event("startup")
 def on_startup():
     # SOLO para desarrollo. En producción usa Alembic.
     Base.metadata.create_all(bind=engine)
+
 
 # ---------------------- Usuarios ---------------------- #
 @app.post("/register", response_model=UserResponse)
@@ -31,7 +28,7 @@ def register_user(user_data: UserRegister, db: Session = Depends(get_db)):
         email=user_data.email,
         hashed_password=hashed_password,
         role=getattr(user_data, "role", "cliente_lavanderia"),
-        is_active=True   # ✅ si tu modelo lo tiene
+        is_active=True,  # ✅ si tu modelo lo tiene
     )
     db.add(new_user)
     db.commit()
@@ -51,29 +48,46 @@ def login_for_access_token(user_data: UserLogin, db: Session = Depends(get_db)):
     access_token = create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
+
 @app.get("/users/me", response_model=UserResponse)
 def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user
+
 
 @app.get("/protected")
 def protected_endpoint(current_user: User = Depends(get_current_user)):
     return {"message": f"Hello {current_user.username}, you are authenticated."}
 
+
 @app.get("/admin-only")
 def admin_only_endpoint(current_user: User = Depends(require_admin)):
     return {"message": "Welcome, Admin. This is a restricted area."}
 
+
 # Aquí luego agregas los endpoints de Products y Favorites.
 
+
 # CREATE
-@app.post("/laundry_pedidos/", response_model=PedidoResponse, status_code=status.HTTP_201_CREATED)
-def create_pedido(pedido: PedidoCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+@app.post(
+    "/laundry_pedidos/",
+    response_model=PedidoResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_pedido(
+    pedido: PedidoCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     # Regla simple de duplicado: mismo cliente + fecha_recepcion + tipo_servicio
-    dup = db.query(Pedido).filter(
-        Pedido.cliente == pedido.cliente,
-        Pedido.fecha_recepcion == pedido.fecha_recepcion,
-        Pedido.tipo_servicio == pedido.tipo_servicio
-    ).first()
+    dup = (
+        db.query(Pedido)
+        .filter(
+            Pedido.cliente == pedido.cliente,
+            Pedido.fecha_recepcion == pedido.fecha_recepcion,
+            Pedido.tipo_servicio == pedido.tipo_servicio,
+        )
+        .first()
+    )
     if dup:
         raise HTTPException(status_code=400, detail="Pedido ya existe")
 
@@ -83,30 +97,44 @@ def create_pedido(pedido: PedidoCreate, db: Session = Depends(get_db), current_u
         tipo_servicio=pedido.tipo_servicio,
         fecha_recepcion=pedido.fecha_recepcion,
         fecha_entrega=pedido.fecha_entrega,
-        estado=pedido.estado
+        estado=pedido.estado,
     )
     db.add(new)
     db.commit()
     db.refresh(new)
     return new
 
+
 # READ by id
 @app.get("/laundry_pedidos/{pedido_id}", response_model=PedidoResponse)
-def get_pedido(pedido_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def get_pedido(
+    pedido_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     pedido = db.query(Pedido).filter(Pedido.id == pedido_id).first()
     if not pedido:
         # Mensaje exacto que esperan los tests (lowercase)
         raise HTTPException(status_code=404, detail="pedido no encontrado")
     return pedido
 
+
 # READ all
 @app.get("/laundry_pedidos/", response_model=list[PedidoResponse])
-def get_all_pedidos(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def get_all_pedidos(
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+):
     return db.query(Pedido).all()
+
 
 # UPDATE (full)
 @app.put("/laundry_pedidos/{pedido_id}", response_model=PedidoResponse)
-def update_pedido(pedido_id: int, update: PedidoCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def update_pedido(
+    pedido_id: int,
+    update: PedidoCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     pedido = db.query(Pedido).filter(Pedido.id == pedido_id).first()
     if not pedido:
         raise HTTPException(status_code=404, detail="pedido no encontrado")
@@ -114,7 +142,9 @@ def update_pedido(pedido_id: int, update: PedidoCreate, db: Session = Depends(ge
     if update.prendas <= 0:
         raise HTTPException(status_code=422, detail="prendas debe ser mayor que 0")
     if update.fecha_entrega < update.fecha_recepcion:
-        raise HTTPException(status_code=422, detail="fecha_entrega debe ser >= fecha_recepcion")
+        raise HTTPException(
+            status_code=422, detail="fecha_entrega debe ser >= fecha_recepcion"
+        )
 
     pedido.cliente = update.cliente
     pedido.prendas = update.prendas
@@ -130,9 +160,11 @@ def update_pedido(pedido_id: int, update: PedidoCreate, db: Session = Depends(ge
 
 # DELETE protegido por admin
 @app.delete("/laundry_pedidos/{pedido_id}", status_code=status.HTTP_200_OK)
-def delete_pedido(pedido_id: int,
-                  db: Session = Depends(get_db),
-                  current_user: User = Depends(require_admin)):   # <-- require_admin
+def delete_pedido(
+    pedido_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):  # <-- require_admin
     pedido = db.query(Pedido).filter(Pedido.id == pedido_id).first()
     if not pedido:
         raise HTTPException(status_code=404, detail="pedido no encontrado")

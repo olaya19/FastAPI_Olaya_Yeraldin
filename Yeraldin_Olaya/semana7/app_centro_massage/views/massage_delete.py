@@ -1,11 +1,10 @@
 # views/massage_delete.py
-from fastapi import APIRouter
 from controllers.massage_controller import delete_massage
-from redis_client import redis_client  
-
-
+from fastapi import APIRouter
+from redis_client import redis_client
 
 router = APIRouter()
+
 
 @router.delete("/{massage_id}")
 async def delete_massage_view(massage_id: int):

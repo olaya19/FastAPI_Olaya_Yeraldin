@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from sqlalchemy.orm import relationship
 from database import Base
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
 
 # Modelo existente de Producto (actualizar)
 class Producto(Base):
@@ -14,6 +15,7 @@ class Producto(Base):
     # NUEVO: Relación con categoría
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
     categoria = relationship("Categoria", back_populates="productos")
+
 
 # NUEVO: Modelo de Categoría
 class Categoria(Base):

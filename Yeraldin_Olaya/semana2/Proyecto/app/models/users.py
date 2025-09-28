@@ -1,16 +1,20 @@
-from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
+from pydantic import BaseModel, EmailStr
+
 
 class UserPreferences(BaseModel):
     theme: str = "light"
     language: str = "en"
     timezone: str = "UTC"
 
+
 class UserBase(BaseModel):
     username: str
     email: EmailStr
     full_name: Optional[str] = None
+
 
 class UserInDB(UserBase):
     id: int
@@ -20,6 +24,7 @@ class UserInDB(UserBase):
     class Config:
         # Esto permite que Pydantic maneje tipos de datos no estándar como `datetime`
         from_attributes = True
+
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None

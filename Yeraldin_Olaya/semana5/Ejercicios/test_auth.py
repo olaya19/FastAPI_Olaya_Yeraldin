@@ -1,5 +1,7 @@
 # Crear archivo test_auth.py para probar
-from auth import hash_password, verify_password, create_access_token, verify_token
+from auth import (create_access_token, hash_password, verify_password,
+                  verify_token)
+
 
 def test_password_hashing():
     password = "mi_password_123"
@@ -17,6 +19,7 @@ def test_password_hashing():
     is_invalid = verify_password("password_incorrecto", hashed)
     print(f"Password incorrecto es válido: {is_invalid}")
 
+
 def test_jwt_tokens():
     username = "juan123"
 
@@ -27,6 +30,7 @@ def test_jwt_tokens():
     # Verificar token
     decoded_username = verify_token(token)
     print(f"Username desde token: {decoded_username}")
+
 
 if __name__ == "__main__":
     print("=== Test Password Hashing ===")

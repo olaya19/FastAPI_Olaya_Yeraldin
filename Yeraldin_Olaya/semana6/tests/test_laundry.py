@@ -1,11 +1,11 @@
 # tests/test_{TU_PREFIJO}.py
+from datetime import date, timedelta
+
 import pytest
 from fastapi.testclient import TestClient
-from datetime import date, timedelta
 
 
 class TestLavanderiaAPI:
-
     def test_create_pedido_complete(self, client, auth_headers):
         data = {
             "cliente": "Carlos López",
@@ -13,7 +13,7 @@ class TestLavanderiaAPI:
             "tipo_servicio": "Lavado y planchado",
             "fecha_recepcion": (date.today()).isoformat(),
             "fecha_entrega": (date.today() + timedelta(days=2)).isoformat(),
-            "estado": "pendiente"
+            "estado": "pendiente",
         }
         response = client.post("/laundry_pedidos/", json=data, headers=auth_headers)
         assert response.status_code == 201
@@ -28,7 +28,7 @@ class TestLavanderiaAPI:
             "tipo_servicio": "Lavado",
             "fecha_recepcion": "2025-09-01",
             "fecha_entrega": "2025-09-03",
-            "estado": "pendiente"
+            "estado": "pendiente",
         }
         # 1º creación
         r1 = client.post("/laundry_pedidos/", json=data, headers=auth_headers)
@@ -46,7 +46,7 @@ class TestLavanderiaAPI:
             "tipo_servicio": "Solo lavado",
             "fecha_recepcion": "2025-09-05",
             "fecha_entrega": "2025-09-06",
-            "estado": "pendiente"
+            "estado": "pendiente",
         }
         create = client.post("/laundry_pedidos/", json=data, headers=auth_headers)
         pid = create.json()["id"]
@@ -67,7 +67,7 @@ class TestLavanderiaAPI:
             "tipo_servicio": "Lavado",
             "fecha_recepcion": "2025-09-07",
             "fecha_entrega": "2025-09-09",
-            "estado": "pendiente"
+            "estado": "pendiente",
         }
         create = client.post("/laundry_pedidos/", json=data, headers=auth_headers)
         pid = create.json()["id"]
@@ -78,7 +78,7 @@ class TestLavanderiaAPI:
             "tipo_servicio": "Lavado y secado",
             "fecha_recepcion": "2025-09-07",
             "fecha_entrega": "2025-09-10",
-            "estado": "en progreso"
+            "estado": "en progreso",
         }
         r = client.put(f"/laundry_pedidos/{pid}", json=update, headers=auth_headers)
         assert r.status_code == 200
@@ -91,7 +91,7 @@ class TestLavanderiaAPI:
             "tipo_servicio": "Lavado",
             "fecha_recepcion": "2025-09-08",
             "fecha_entrega": "2025-09-09",
-            "estado": "pendiente"
+            "estado": "pendiente",
         }
         create = client.post("/laundry_pedidos/", json=data, headers=auth_headers)
         pid = create.json()["id"]
@@ -114,7 +114,7 @@ class TestLavanderiaAPI:
             "tipo_servicio": "Lavado",
             "fecha_recepcion": "2025-09-09",
             "fecha_entrega": "2025-09-10",
-            "estado": "pendiente"
+            "estado": "pendiente",
         }
         r = client.post("/laundry_pedidos/", json=invalid, headers=auth_headers)
         assert r.status_code == 422

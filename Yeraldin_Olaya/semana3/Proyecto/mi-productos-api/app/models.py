@@ -1,12 +1,15 @@
-from pydantic import BaseModel, Field
-from typing import Optional
 from datetime import datetime
 from enum import Enum
+from typing import Optional
+
+from pydantic import BaseModel, Field
+
 
 class ProductStatus(str, Enum):
     active = "active"
     inactive = "inactive"
     out_of_stock = "out_of_stock"
+
 
 class ProductCategory(str, Enum):
     electronics = "electronics"
@@ -15,6 +18,7 @@ class ProductCategory(str, Enum):
     home = "home"
     sports = "sports"
     other = "other"
+
 
 class Product(BaseModel):
     id: Optional[int] = None

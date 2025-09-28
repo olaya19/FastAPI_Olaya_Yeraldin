@@ -1,7 +1,8 @@
 # models.py
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from sqlalchemy.orm import relationship
 from database import Base
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
 
 class Autor(Base):
     __tablename__ = "autores"
@@ -12,6 +13,7 @@ class Autor(Base):
 
     # Relación: un autor tiene muchos libros
     libros = relationship("Libro", back_populates="autor")
+
 
 class Libro(Base):
     __tablename__ = "libros"
@@ -25,6 +27,7 @@ class Libro(Base):
     autor_id = Column(Integer, ForeignKey("autores.id"))
     autor = relationship("Autor", back_populates="libros")
 
+
 # Modelo existente de Producto (actualizar)
 class Producto(Base):
     __tablename__ = "productos"
@@ -36,8 +39,9 @@ class Producto(Base):
 
     # NUEVO: Relación con categoría
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
-    categoria = relationship("Categoria", back_populates="productos")    
-    
+    categoria = relationship("Categoria", back_populates="productos")
+
+
 class Categoria(Base):
     __tablename__ = "categorias"
 
@@ -46,4 +50,4 @@ class Categoria(Base):
     descripcion = Column(String)
 
     # Relación: una categoría tiene muchos productos
-    productos = relationship("Producto", back_populates="categoria")    
+    productos = relationship("Producto", back_populates="categoria")

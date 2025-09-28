@@ -1,7 +1,7 @@
-from pydantic import BaseModel
-from typing import Optional
 from datetime import date
-from pydantic import Field, validator
+from typing import Optional
+
+from pydantic import BaseModel, Field, validator
 
 
 # Schemas de Usuario
@@ -10,9 +10,11 @@ class UserRegister(BaseModel):
     email: str
     password: str
 
+
 class UserLogin(BaseModel):
     username: str
     password: str
+
 
 class UserResponse(BaseModel):
     id: int
@@ -21,16 +23,19 @@ class UserResponse(BaseModel):
     role: str
     is_active: bool
 
+
 # Schemas de Autenticación
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
 
 # Schemas de Producto
 class ProductCreate(BaseModel):
     name: str
     description: Optional[str] = None
     price: int
+
 
 class ProductResponse(BaseModel):
     id: int
@@ -39,12 +44,14 @@ class ProductResponse(BaseModel):
     price: int
     created_by: int
 
+
 # Schemas de Favoritos
 class FavoriteResponse(BaseModel):
     id: int
     user_id: int
     product_id: int
     product: ProductResponse
+
 
 class PedidoCreate(BaseModel):
     cliente: str = Field(..., min_length=1)
@@ -60,6 +67,7 @@ class PedidoCreate(BaseModel):
         if fr and v < fr:
             raise ValueError("fecha_entrega debe ser >= fecha_recepcion")
         return v
+
 
 class PedidoResponse(BaseModel):
     id: int

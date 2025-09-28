@@ -1,5 +1,7 @@
-from pydantic import BaseModel
 from typing import Optional
+
+from pydantic import BaseModel
+
 
 # Schemas de Usuario
 class UserRegister(BaseModel):
@@ -7,9 +9,11 @@ class UserRegister(BaseModel):
     email: str
     password: str
 
+
 class UserLogin(BaseModel):
     username: str
     password: str
+
 
 class UserResponse(BaseModel):
     id: int
@@ -18,10 +22,12 @@ class UserResponse(BaseModel):
     role: str
     is_active: bool
 
+
 # Schemas de Autenticación
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
 
 # Schemas de Producto
 class ProductCreate(BaseModel):
@@ -29,12 +35,14 @@ class ProductCreate(BaseModel):
     description: Optional[str] = None
     price: int
 
+
 class ProductResponse(BaseModel):
     id: int
     name: str
     description: Optional[str]
     price: int
     created_by: int
+
 
 # Schemas de Favoritos
 class FavoriteResponse(BaseModel):

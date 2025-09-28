@@ -1,6 +1,7 @@
 # models/massage_model.py
-from sqlalchemy import Column, Integer, String
 from database import Base
+from sqlalchemy import Column, Integer, String
+
 
 class Massage(Base):
     __tablename__ = "massages"

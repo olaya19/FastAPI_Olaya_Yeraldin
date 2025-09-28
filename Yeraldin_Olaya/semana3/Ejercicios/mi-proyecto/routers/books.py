@@ -1,9 +1,11 @@
-from fastapi import APIRouter, HTTPException, status, Query
-from typing import List, Optional
-from models import Book
-from exceptions import BookNotFoundError, DuplicateISBNError, InvalidBookDataError
-from utils import create_response
 import logging
+from typing import List, Optional
+
+from exceptions import (BookNotFoundError, DuplicateISBNError,
+                        InvalidBookDataError)
+from fastapi import APIRouter, HTTPException, Query, status
+from models import Book
+from utils import create_response
 
 router = APIRouter(prefix="/books", tags=["books"])
 
@@ -13,10 +15,46 @@ next_id = 1
 
 # Datos de prueba
 initial_books = [
-    {"title": "The Lord of the Rings", "author": "J.R.R. Tolkien", "isbn": "978-0618053267", "year": 1954, "rating": 4.8, "is_available": True, "is_bestseller": True, "tags": {"fantasy", "classic"}},
-    {"title": "Dune", "author": "Frank Herbert", "isbn": "978-0441172719", "year": 1965, "rating": 4.5, "is_available": True, "is_bestseller": True, "tags": {"scifi", "classic"}},
-    {"title": "1984", "author": "George Orwell", "isbn": "978-0451524935", "year": 1949, "rating": 4.6, "is_available": False, "is_bestseller": False, "tags": {"dystopian", "classic"}},
-    {"title": "The Hitchhiker's Guide to the Galaxy", "author": "Douglas Adams", "isbn": "978-0345391803", "year": 1979, "rating": 4.2, "is_available": True, "is_bestseller": False, "tags": {"scifi", "humor"}}
+    {
+        "title": "The Lord of the Rings",
+        "author": "J.R.R. Tolkien",
+        "isbn": "978-0618053267",
+        "year": 1954,
+        "rating": 4.8,
+        "is_available": True,
+        "is_bestseller": True,
+        "tags": {"fantasy", "classic"},
+    },
+    {
+        "title": "Dune",
+        "author": "Frank Herbert",
+        "isbn": "978-0441172719",
+        "year": 1965,
+        "rating": 4.5,
+        "is_available": True,
+        "is_bestseller": True,
+        "tags": {"scifi", "classic"},
+    },
+    {
+        "title": "1984",
+        "author": "George Orwell",
+        "isbn": "978-0451524935",
+        "year": 1949,
+        "rating": 4.6,
+        "is_available": False,
+        "is_bestseller": False,
+        "tags": {"dystopian", "classic"},
+    },
+    {
+        "title": "The Hitchhiker's Guide to the Galaxy",
+        "author": "Douglas Adams",
+        "isbn": "978-0345391803",
+        "year": 1979,
+        "rating": 4.2,
+        "is_available": True,
+        "is_bestseller": False,
+        "tags": {"scifi", "humor"},
+    },
 ]
 
 for book_data in initial_books:
@@ -28,21 +66,26 @@ for book_data in initial_books:
     except Exception as e:
         logging.error(f"Error loading initial book data: {e}")
 
+
 @router.get("/", response_model=List[Book])
 def get_all_books(skip: int = 0, limit: int = 10):
-    return list(BOOKS_DB.values())[skip: skip + limit]
+    return list(BOOKS_DB.values())[skip : skip + limit]
+
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def create_book(book: Book):
     for existing_book in BOOKS_DB.values():
         if existing_book.isbn == book.isbn:
             raise DuplicateISBNError(book.isbn)
-    
+
     global next_id
     new_book = book.copy(update={"id": next_id})
     BOOKS_DB[next_id] = new_book
     next_id += 1
-    return create_response(success=True, data=new_book, message="Book created successfully")
+    return create_response(
+        success=True, data=new_book, message="Book created successfully"
+    )
+
 
 @router.get("/{book_id}")
 def get_book_by_id(book_id: int):
@@ -50,24 +93,29 @@ def get_book_by_id(book_id: int):
         raise BookNotFoundError(book_id)
     return create_response(success=True, data=BOOKS_DB[book_id])
 
+
 @router.put("/{book_id}")
 def update_book(book_id: int, book_update: Book):
     if book_id not in BOOKS_DB:
         raise BookNotFoundError(book_id)
-    
+
     if book_update.isbn != BOOKS_DB[book_id].isbn:
         for existing_book in BOOKS_DB.values():
             if existing_book.isbn == book_update.isbn and existing_book.id != book_id:
                 raise DuplicateISBNError(book_update.isbn)
 
     BOOKS_DB[book_id] = book_update.copy(update={"id": book_id})
-    return create_response(success=True, data=BOOKS_DB[book_id], message="Book updated successfully")
+    return create_response(
+        success=True, data=BOOKS_DB[book_id], message="Book updated successfully"
+    )
+
 
 @router.delete("/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_book(book_id: int):
     if book_id not in BOOKS_DB:
         raise BookNotFoundError(book_id)
     del BOOKS_DB[book_id]
+
 
 @router.get("/search", response_model=List[Book])
 def search_books(
@@ -76,7 +124,7 @@ def search_books(
     genre: Optional[str] = Query(None),
     year_from: Optional[int] = Query(None, ge=1),
     year_to: Optional[int] = Query(None, ge=1),
-    available_only: bool = Query(False)
+    available_only: bool = Query(False),
 ):
     results = list(BOOKS_DB.values())
     if title:
@@ -91,27 +139,31 @@ def search_books(
         results = [b for b in results if b.year <= year_to]
     if available_only:
         results = [b for b in results if b.is_available]
-    
+
     return results
+
 
 @router.get("/stats")
 def get_book_stats():
     total_books = len(BOOKS_DB)
     available_count = sum(1 for b in BOOKS_DB.values() if b.is_available)
     borrowed_count = total_books - available_count
-    
+
     by_genre = {}
     for book in BOOKS_DB.values():
         for tag in book.tags:
             by_genre[tag] = by_genre.get(tag, 0) + 1
-    
+
     total_rating = sum(b.rating for b in BOOKS_DB.values())
     avg_rating = total_rating / total_books if total_books > 0 else 0
-    
-    return create_response(success=True, data={
-        "total_books": total_books,
-        "available_count": available_count,
-        "borrowed_count": borrowed_count,
-        "by_genre": by_genre,
-        "avg_rating": round(avg_rating, 2)
-    })
+
+    return create_response(
+        success=True,
+        data={
+            "total_books": total_books,
+            "available_count": available_count,
+            "borrowed_count": borrowed_count,
+            "by_genre": by_genre,
+            "avg_rating": round(avg_rating, 2),
+        },
+    )

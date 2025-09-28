@@ -4,11 +4,12 @@ from routers import products
 app = FastAPI(
     title="API de Productos - Semana 3",
     description="API para gestión de productos con validaciones Pydantic y manejo de errores",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Incluir routers
 app.include_router(products.router, prefix="/products", tags=["Productos"])
+
 
 @app.get("/")
 def read_root():
@@ -21,6 +22,6 @@ def read_root():
             "CRUD completo de productos",
             "Validaciones Pydantic avanzadas",
             "Manejo de errores con HTTPException",
-            "Filtros por precio y categoría"
-        ]
+            "Filtros por precio y categoría",
+        ],
     }

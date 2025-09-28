@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, DateTime
-from sqlalchemy.sql import func
 from database import Base  # ✅ Base único
+from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
+                        String)
+from sqlalchemy.sql import func
+
 
 class User(Base):
     __tablename__ = "users"
@@ -11,6 +13,7 @@ class User(Base):
     role = Column(String, default="user")
     is_active = Column(Boolean, default=True)
 
+
 class Product(Base):
     __tablename__ = "products"
     id = Column(Integer, primary_key=True, index=True)
@@ -19,11 +22,13 @@ class Product(Base):
     price = Column(Integer)  # En centavos
     created_by = Column(Integer, ForeignKey("users.id"))
 
+
 class Favorite(Base):
     __tablename__ = "favorites"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     product_id = Column(Integer, ForeignKey("products.id"))
+
 
 class Pedido(Base):
     __tablename__ = "laundry_pedidos"

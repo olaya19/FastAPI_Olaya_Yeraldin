@@ -1,10 +1,10 @@
 # views/massage_list.py
-from fastapi import APIRouter
 from controllers.massage_controller import get_all_massages
-from redis_client import redis_client  
-
+from fastapi import APIRouter
+from redis_client import redis_client
 
 router = APIRouter()
+
 
 @router.get("/")
 async def list_massages():

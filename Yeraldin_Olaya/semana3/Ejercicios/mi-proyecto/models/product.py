@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field, validator
 from typing import Optional
+
+from pydantic import BaseModel, Field, validator
+
 
 class Product(BaseModel):
     id: Optional[int] = None
@@ -7,14 +9,14 @@ class Product(BaseModel):
     price: float
     is_available: bool = Field(True)
 
-    @validator('name')
+    @validator("name")
     def validate_name(cls, v):
         if not v.strip():
-            raise ValueError('El nombre no puede estar vacío')
+            raise ValueError("El nombre no puede estar vacío")
         return v.title()
 
-    @validator('price')
+    @validator("price")
     def validate_price(cls, v):
         if v <= 0:
-            raise ValueError('El precio debe ser un número positivo')
+            raise ValueError("El precio debe ser un número positivo")
         return v

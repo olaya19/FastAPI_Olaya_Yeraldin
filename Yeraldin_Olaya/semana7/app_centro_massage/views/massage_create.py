@@ -1,11 +1,10 @@
 # views/massage_create.py
-from fastapi import APIRouter
 from controllers.massage_controller import create_massage
-from redis_client import redis_client  
-
-
+from fastapi import APIRouter
+from redis_client import redis_client
 
 router = APIRouter()
+
 
 @router.post("/")
 async def add_massage(session: str, therapist: str, schedule: str):

@@ -1,0 +1,16 @@
+[tool.black]
+line-length = 88
+target-version = ["py39"]
+skip-string-normalization = true
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.coverage.run]
+branch = true
+source = ["app"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80

@@ -6,7 +6,7 @@ from routers.products import router as products_router
 app = FastAPI(
     title="Mi API Organizada",
     description="API de productos con estructura profesional",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Configurar CORS básico
@@ -21,11 +21,14 @@ app.add_middleware(
 # Incluir routers
 app.include_router(products_router, prefix="/api/v1")
 
+
 # Endpoint de salud
 @app.get("/health")
 def health_check():
     return {"status": "healthy", "message": "API funcionando correctamente"}
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

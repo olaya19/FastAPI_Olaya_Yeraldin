@@ -3,9 +3,10 @@
 Script de verificación rápida del setup FastAPI
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
+
 
 def verificar_setup():
     print("🔍 VERIFICACIÓN DEL SETUP FASTAPI")
@@ -28,6 +29,7 @@ def verificar_setup():
     # Verificar instalaciones
     try:
         import fastapi
+
         print(f"✅ FastAPI instalado: v{fastapi.__version__}")
     except ImportError:
         print("❌ FastAPI NO instalado")
@@ -35,6 +37,7 @@ def verificar_setup():
 
     try:
         import uvicorn
+
         print(f"✅ Uvicorn instalado: v{uvicorn.__version__}")
     except ImportError:
         print("❌ Uvicorn NO instalado")
@@ -50,11 +53,22 @@ def verificar_setup():
 
     # Verificar configuración Git
     import subprocess
+
     try:
-        git_user = subprocess.check_output(['git', 'config', 'user.name'],
-                                         stderr=subprocess.DEVNULL).decode().strip()
-        git_email = subprocess.check_output(['git', 'config', 'user.email'],
-                                          stderr=subprocess.DEVNULL).decode().strip()
+        git_user = (
+            subprocess.check_output(
+                ["git", "config", "user.name"], stderr=subprocess.DEVNULL
+            )
+            .decode()
+            .strip()
+        )
+        git_email = (
+            subprocess.check_output(
+                ["git", "config", "user.email"], stderr=subprocess.DEVNULL
+            )
+            .decode()
+            .strip()
+        )
         print(f"✅ Git configurado - Usuario: {git_user}")
         print(f"✅ Git configurado - Email: {git_email}")
     except:
@@ -67,6 +81,7 @@ def verificar_setup():
     print("🔧 Verificación disponible en: http://localhost:8000/info/setup")
 
     return True
+
 
 if __name__ == "__main__":
     verificar_setup()
